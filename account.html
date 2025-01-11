@@ -1,20 +1,66 @@
 <!doctype html>
 
+
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Blank template</title>
-    <!-- Load external CSS styles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <title>You're Spending Predictor </title>
+
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin:0;
+            padding: 20px;
+            max-width: 100%;
+            background-color: #f9f9f9;
+            border: 1px solid #311b1b;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 20px;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        p {
+            font-size: 18px;
+            margin-top: 20px;
+        }
+    </style>
+   
 </head>
-<body>
+
+
+
+
     <body class="bodybg" >
         <div align="center">
             <table width="100%">
                 <tr>
                     <td width="310" align="center">
                         <img src="images/logo_new.png">
-                    </td> 
+                    </td>
                     <td>
                         <table width="80%" class="tableborder"><tr><td>
                             <table  class="tablespacing-center"  width="100%">
@@ -23,42 +69,87 @@
                                     <td><a href="forum.html">Forum</a></td>
                                     <td><a href="#">Account</a></td>
                                     <td><a href="sign_up.html">Sign Up</a></td>
-                                    
+                                   
                                 </tr>
                             </table>
-                        </td></tr> 
-                        </table>               
+                        </td></tr>
+                        </table>              
                     </td>
                 </tr>
             </table>
                
-      
-        <h1> You're personalised AI suggestions </h1>
+            #sliders
+            <h1>Predict your savings!</h1>
 
-                
-             <table width="80%" border="1">
-                   
-                <tr style="height:80px">
-                    <td width="30%" align="center"><img src="images/accountimage.jpg"></td>
-                    <td>
-                        <table width="100%">
-                            <div> Username</div>
-                            <div>Email</div>
-                            <div>Spending Goal</div>
-                     </td>
-                    </table>
-                </tr>
-              
-                
-                <tr>
-                    <div align="left"></div>
-                    <div align="left"></div>
 
-                        
-                 </tr>
-            </table>
-        
-      
+            <label for="groceries">Groceries: </label>
+    <input type="range" id="groceries" min="0" max="1000" value="300">
+    <span id="groceries-value">300</span><br>
+
+
+    <label for="entertainment">Entertainment: </label>
+    <input type="range" id="entertainment" min="0" max="1000" value="200">
+    <span id="entertainment-value">200</span><br>
+
+
+    <label for="utilities">Utilities: </label>
+    <input type="range" id="utilities" min="0" max="1000" value="150">
+    <span id="utilities-value">150</span><br>
+
+
+    <label for="savings">Your Savings: </label>
+    <input type="number" id="savings" value="50"><br>
+
+
+    <button onclick="sendData()">Get Prediction</button>
+
+
+    <h3>Prediction and Suggestion:</h3>
+    <div id="prediction-result"></div>
+
+
+    <script>
+        document.getElementById("groceries").oninput = function() {
+            document.getElementById("groceries-value").innerText = this.value;
+        }
+        document.getElementById("entertainment").oninput = function() {
+            document.getElementById("entertainment-value").innerText = this.value;
+        }
+        document.getElementById("utilities").oninput = function() {
+            document.getElementById("utilities-value").innerText = this.value;
+        }
+
+
+        function sendData() {
+            const groceries = document.getElementById("groceries").value;
+            const entertainment = document.getElementById("entertainment").value;
+            const utilities = document.getElementById("utilities").value;
+            const savings = document.getElementById("savings").value;
+
+
+            fetch("/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    groceries: groceries,
+                    entertainment: entertainment,
+                    utilities: utilities,
+                    actual_savings: savings
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("prediction-result").innerHTML = `
+                    Predicted Savings: $${data.predicted_savings}<br>
+                    Suggestion: ${data.suggestion}
+                `;
+            });
+        }
+    </script>
 </body>
-
 </html>
+
+
+           
