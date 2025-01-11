@@ -1,0 +1,88 @@
+/* Place your CSS styles in this file */
+
+body{
+    font-family: "helvetica", Times, serif;
+}
+
+.p-size{
+    color: green;
+    font-size: 65px;
+    font-weight: bold;
+    text-shadow: 2px 2px #ECECEC;
+    border: white;
+    text-align: right;
+}
+
+.bodybg {
+    background-image: url("images/background_final.png");
+    background-repeat: repeat-y;
+    background-size: 98%;
+}
+
+#one td {
+    border: 1px solid green;
+}
+
+#one-n td {
+    border: 0px solid lightgreen;
+}
+
+h1 {
+    text-align: center;
+    font-family: "Source Sans Pro", sans-serif;
+    font-weight: normal;
+}
+
+.tablespacing{
+    border-spacing: 10px;
+}
+
+.tableborder{
+    border: 5px solid green;
+    margin-left: left;
+    padding: 0px;
+    border-radius:16px;
+    background-color: rgb(85, 245, 85);
+
+}
+
+hr.blueviolet {
+    border-top: 1px solid lightgreen;
+}
+
+.tablespacing-center{
+        border-spacing: 10px;
+        text-align: right;
+        padding: 8px; 
+    }
+
+.bg-img {
+    background: url("images/background.png");
+    background-repeat: no-repeat;
+}
+
+.tableround-r {
+    border-collapse:separate;
+    border-radius:16px;
+    border-width: 8px;
+    height: 200px;
+    width: 650px;
+    border: 1px solid lightgreen;
+}
+
+
+.tableround {
+    border-collapse:separate;
+    background-color: lightgreen;
+    border-radius:16px;
+    border-width: 8px;
+    height: 400px;
+    width: 250px;
+    border: 1px solid green;
+}
+
+.tableroundth {
+    border:solid black 1px;
+}
+
+
