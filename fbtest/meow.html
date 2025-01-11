@@ -1,0 +1,22 @@
+<html>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script>
+        const groceries = 5;
+        const entertainment = 5;
+        const utilities = 5;
+        const savings = 5;
+        axios.post("http://127.0.0.1:5000/predict", {
+            groceries: groceries,
+            entertainment: entertainment,
+            utilities: utilities,
+            actual_savings: savings
+        })
+        .then(function (response) {
+    console.log("Worked!", response);
+})
+.catch(function (error) {
+    console.error("Error:", error);
+});
+    </script>
+</html>

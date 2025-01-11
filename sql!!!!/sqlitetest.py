@@ -1,46 +1,34 @@
-import firebase_admin
-from firebase_admin import credentials, firestore
-
-# the path to your Firebase service account key
-cred = credentials.Certificate("firebase/diva-app-codefest-firebase-adminsdk-5n04t-ede1a02a0f.json")
-
-# initializes Firebase app with the credentials
-firebase_admin.initialize_app(cred)
-
-# gets a Firestore client
-db = firestore.client()
-
-from fbtest.main import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import joblib
 import numpy as np
-import firebase_admin
-from firebase_admin import credentials, firestore
-
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
-# Initialize Firebase
-cred = credentials.Certificate("firebase/diva-app-codefest-firebase-adminsdk-5n04t-ede1a02a0f.json")
-firebase_admin.initialize_app(cred)
-db = firestore.client()
+# initialize sqlite!!
 
-# Load the pre-trained linear regression model
+
+# Load the trained model
 model = joblib.load("linear_regression_model.pkl")
 
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
         data = request.json
-        groceries = data["groceries"]
-        entertainment = data["entertainment"]
-        utilities = data["utilities"]
-        actual_savings = data["actual_savings"]
-        
-        # Prepare the input data for prediction
+        print("Received data:", data)
+
+        # replace and create 1 table and 4 rows using grocery, entertainment, utilities, and actual_savings
+        groceries = float(data["groceries"])
+        entertainment = float(data["entertainment"])
+        utilities = float(data["utilities"])
+        actual_savings = float(data["actual_savings"])
+
+        # Prepare data for prediction
         input_data = np.array([[groceries, entertainment, utilities]])
         predicted_savings = model.predict(input_data)[0]
-        
-        # Create a personalized suggestion
+
+        # Generate suggestion based on comparison
         if actual_savings < predicted_savings:
             suggestion = "You need to save more!"
         elif actual_savings > predicted_savings:
@@ -48,7 +36,7 @@ def predict():
         else:
             suggestion = "You are saving as predicted!"
         
-        # Store the data in Firebase Firestore
+        # replace Save data to sqlite
         user_data = {
             "groceries": groceries,
             "entertainment": entertainment,
@@ -57,18 +45,19 @@ def predict():
             "actual_savings": actual_savings,
             "suggestion": suggestion
         }
-        db.collection("user_data").add(user_data)
-        
-        # Return the result to the user
+
+        print("hello from the other side")
+
+        print("adssadasd")
         return jsonify({
             "predicted_savings": predicted_savings,
             "suggestion": suggestion
         })
 
     except Exception as e:
+        print("adadad")
+        print(e)
         return jsonify({"error": str(e)})
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-

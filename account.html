@@ -49,6 +49,7 @@
         }
     </style>
    
+   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 
@@ -99,64 +100,78 @@
     <label for="savings">Your Savings: </label>
     <input type="number" id="savings" value="50"><br>
 
+    
+
 
     <button onclick="sendData()">Get Prediction</button>
 
 
     <h3>Prediction and Suggestion:</h3>
     <div id="prediction-result"></div>
+    <p>Based on your spending habits, you should be able to save <span id="message"></span> per month.</p>
+    <p></p>
 
+<script>
+            
+    document.getElementById("groceries").oninput = function() {
+        document.getElementById("groceries-value").innerText = this.value;
+    }
+    document.getElementById("entertainment").oninput = function() {
+        document.getElementById("entertainment-value").innerText = this.value;
+    }
+    document.getElementById("utilities").oninput = function() {
+        document.getElementById("utilities-value").innerText = this.value;
+    }
 
-    <script>
-        document.getElementById("groceries").oninput = function() {
-            document.getElementById("groceries-value").innerText = this.value;
-        }
-        document.getElementById("entertainment").oninput = function() {
-            document.getElementById("entertainment-value").innerText = this.value;
-        }
-        document.getElementById("utilities").oninput = function() {
-            document.getElementById("utilities-value").innerText = this.value;
-        }
+    async function sendData() {
+        const groceries = document.getElementById("groceries").value;
+        const entertainment = document.getElementById("entertainment").value;
+        const utilities = document.getElementById("utilities").value;
+        const savings = document.getElementById("savings").value;
 
+        console.log("Sending data to backend:", { groceries, entertainment, utilities, actual_savings: savings });
 
-        function sendData() {
-    const groceries = document.getElementById("groceries").value;
-    const entertainment = document.getElementById("entertainment").value;
-    const utilities = document.getElementById("utilities").value;
-    const savings = document.getElementById("savings").value;
-
-    console.log("Sending data to backend:", { groceries, entertainment, utilities, actual_savings: savings });
-
-    fetch("http://127.0.0.1:5000/predict", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
+        let foo = axios.post("http://127.0.0.1:5000/predict", {
             groceries: groceries,
             entertainment: entertainment,
             utilities: utilities,
             actual_savings: savings
+        });
+
+        console.log(await foo);
+
+        // console.log("asodijasiodja");
+
+        await fetch("http://127.0.0.1:5000/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                groceries: groceries,
+                entertainment: entertainment,
+                utilities: utilities,
+                actual_savings: savings
+            })
         })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        document.getElementById("prediction-result").innerHTML = `
-            Predicted Savings: $${data.predicted_savings}<br>
-            Suggestion: ${data.suggestion}
-        `;
-    })
-    .catch(error => {
-        console.error("Error:", error);
-        document.getElementById("prediction-result").innerText = `Error: ${error.message}`;
-    });
-}
-    </script>
+    
+        // .then(response => {
+        //     console.log("worked!");
+        //     if (!response.ok) {
+        //         throw new Error(`HTTP error! status: ${response.status}`);
+        //     }
+        //     return response.json();
+        // })
+        // .then(data => {
+        //     console.log("Response from backend:", data);
+        // })
+        // .catch(error => {
+        //     console.error("Error:", error);
+        //     alert("Failed to fetch data from the server. Please check the console for more details.");
+        // });
+    }
+</script>
+
 </body>
 </html>
 
