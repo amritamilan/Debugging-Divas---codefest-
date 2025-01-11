@@ -2,7 +2,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 # the path to your Firebase service account key
-cred = credentials.Certificate("firebase\diva-app-codefest-firebase-adminsdk-5n04t-ede1a02a0f.json")
+cred = credentials.Certificate("firebase/diva-app-codefest-firebase-adminsdk-5n04t-ede1a02a0f.json")
 
 # initializes Firebase app with the credentials
 firebase_admin.initialize_app(cred)
@@ -16,10 +16,11 @@ import numpy as np
 import firebase_admin
 from firebase_admin import credentials, firestore
 
+
 app = Flask(__name__)
 
 # Initialize Firebase
-cred = credentials.Certificate("firebase\diva-app-codefest-firebase-adminsdk-5n04t-ede1a02a0f.json")
+cred = credentials.Certificate("firebase/diva-app-codefest-firebase-adminsdk-5n04t-ede1a02a0f.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
