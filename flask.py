@@ -1,60 +1,60 @@
 
-
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 import joblib
+import numpy as np
 import firebase_admin
 from firebase_admin import credentials, firestore
 
+app = Flask(__name__)
+
 # Initialize Firebase
-cred = credentials.Certificate("path_to_your_firebase_key.json")  # Add your Firebase service key
+cred = credentials.Certificate("path/to/your/firebase/credentials.json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
-# Flask App
-app = Flask(__name__)
-
-# Load Trained Model
+# Load the trained model
 model = joblib.load("linear_regression_model.pkl")
 
-# Homepage Route
-@app.route("/")
-def index():
-    return render_template("index.html")
-
-# Predict Savings
 @app.route("/predict", methods=["POST"])
 def predict():
-    data = request.json
-    groceries = data.get("groceries", 0)
-    entertainment = data.get("entertainment", 0)
-    utilities = data.get("utilities", 0)
+    try:
+        data = request.json
+        groceries = data["groceries"]
+        entertainment = data["entertainment"]
+        utilities = data["utilities"]
+        actual_savings = data["actual_savings"]
+        
+        # Prepare data for prediction
+        input_data = np.array([[groceries, entertainment, utilities]])
+        predicted_savings = model.predict(input_data)[0]
+        
+        # Generate suggestion based on comparison
+        if actual_savings < predicted_savings:
+            suggestion = "You need to save more!"
+        elif actual_savings > predicted_savings:
+            suggestion = "Great job saving more than predicted!"
+        else:
+            suggestion = "You are saving as predicted!"
+        
+        # Save data to Firestore
+        user_data = {
+            "groceries": groceries,
+            "entertainment": entertainment,
+            "utilities": utilities,
+            "predicted_savings": predicted_savings,
+            "actual_savings": actual_savings,
+            "suggestion": suggestion
+        }
+        db.collection("user_data").add(user_data)
+        
+        # Return the result to the user
+        return jsonify({
+            "predicted_savings": predicted_savings,
+            "suggestion": suggestion
+        })
 
-    # Input for Model
-    user_input = [[groceries, entertainment, utilities]]
-    prediction = model.predict(user_input)
-
-    # Save Prediction to Firebase
-    user_id = data.get("user_id", "default_user")  # User ID can be dynamic
-    db.collection("users").document(user_id).set({
-        "groceries": groceries,
-        "entertainment": entertainment,
-        "utilities": utilities,
-        "predicted_savings": prediction[0]
-    }, merge=True)
-
-    return jsonify({"predicted_savings": prediction[0]})
-
-# Leaderboard
-@app.route("/leaderboard", methods=["GET"])
-def leaderboard():
-    users_ref = db.collection("users")
-    docs = users_ref.stream()
-    leaderboard_data = [
-        {"user": doc.id, **doc.to_dict()} for doc in docs
-    ]
-    # Sort by savings (highest first)
-    leaderboard_data.sort(key=lambda x: x["predicted_savings"], reverse=True)
-    return jsonify(leaderboard_data)
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 if __name__ == "__main__":
     app.run(debug=True)
