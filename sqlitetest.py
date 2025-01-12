@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import joblib
 import numpy as np
 from flask_cors import CORS
-import sqlite3
+import sqlite3 # imports the sql library
 
 app = Flask(__name__)
 CORS(app)
@@ -52,6 +52,16 @@ def predict():
         # Prepare data for prediction
         input_data = np.array([[groceries, entertainment, utilities]])
         predicted_savings = model.predict(input_data)[0]
+        
+        def compare_savings(predicted_savings, actual_savings):
+            if predicted_savings - actual_savings > 0:
+                less = predicted_savings - actual_savings
+                print("can try saving at least " + str(less) + " more")
+            elif predicted_savings - actual_savings < 0:
+                more = abs(predicted_savings - actual_savings)
+                print("are saving more than your predicted savings! you have " + str(more) + " more to spend")
+            else:
+                print("are saving exactly the amount you should be saving! keep it up")
 
         # Generate suggestion based on the comparison
         if actual_savings < predicted_savings:

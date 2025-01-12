@@ -47,9 +47,10 @@
             font-size: 18px;
             margin-top: 20px;
         }
+
     </style>
    
-   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+   <!-- <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> -->
 </head>
 
 
@@ -103,13 +104,25 @@
     
 
 
-    <button onclick="sendData()">Get Prediction</button>
+    <button onclick="sendData()"> Get Prediction</button>
 
 
     <h3>Prediction and Suggestion:</h3>
     <div id="prediction-result"></div>
-    <p>Based on your spending habits, you should be able to save <span id="message"></span> per month.</p>
-    <p></p>
+        <p>Suggestion: </p>
+        <p>Based on your spending habits, you
+        <py-script output="prediction-result" id="prediction-script">
+             def compare_savings(predicted_savings, actual_savings):
+            if predicted_savings - actual_savings > 0:
+                return f"can try saving at least {less} more"
+                print("can try saving at least " + str(less) + " more")
+            elif predicted_savings - actual_savings < 0:
+                more = abs(predicted_savings - actual_savings)
+                return f"are saving more than your predicted savings! You have {more} more to spend"
+            else:
+                return "are saving exactly the amount you should be saving! Keep it up"
+        </py-script> each month!</p>
+
 
 <script>
             
@@ -131,18 +144,18 @@
 
         console.log("Sending data to backend:", { groceries, entertainment, utilities, actual_savings: savings });
 
-        let foo = axios.post("http://127.0.0.1:5000/predict", {
-            groceries: groceries,
-            entertainment: entertainment,
-            utilities: utilities,
-            actual_savings: savings
-        });
+        // let foo = axios.post("http://127.0.0.1:5000/predict", {
+        //     groceries: groceries,
+        //     entertainment: entertainment,
+        //     utilities: utilities,
+        //     actual_savings: savings
+        // });
 
-        console.log(await foo);
+        // console.log(await foo);
 
         // console.log("asodijasiodja");
 
-        await fetch("http://127.0.0.1:5000/predict", {
+        let response =  fetch("http://127.0.0.1:5000/predict", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -155,6 +168,8 @@
             })
         })
     
+        console.log(response);
+
         // .then(response => {
         //     console.log("worked!");
         //     if (!response.ok) {
