@@ -1,66 +1,101 @@
-<!doctype html>
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-
-    <meta charset="utf-8">
-    <title>Blank template</title>
-    <!-- Load external CSS styles -->
-    <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum - To-Do List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            width: calc(100% - 100px);
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #5cb85c;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #4cae4c;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f4f4f9;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: green;
+        }
+    </style>
 </head>
-<body >
-<div align="center">
-    <table width="100%">
-        <tr>
-            <td width="310" align="center" bgcolor="white">
-                <img src="images/logo_new.png">
-            </td> 
-            <td>
-                <table width="80%" class="tableborder"><tr><td>
-                    <table  class="tablespacing-center"  width="100%">
-                        <tr>
-                            <td><a href="index.html">Home</a></td>
-                            <td><a href="#">Forum</a></td>
-                            <td><a href="account.html">Account</a></td>
-                            <td><a href="sign_up.html">Sign Up</a></td>
-                            
-                        </tr>
-                    </table>
-                </td></tr> 
-                </table>               
-            </td>
-        </tr>
-        <tr>
-        <td>
-        <div align="center"><br><br>
-            <table class="tableround" width="60%" height="200">
-                <tr><td><div align="center" ><br>
-                Member's Name</div></td></tr>
-                <tr><td><div align="center"><hr class="blueviolet"/></div></td></tr>
-            </table><br>
-        </div>
-        </td>
+<body>
+    <div class="container">
+        <h1>To-Do Forum</h1>
+        <form action="/add_task" method="POST">
+            <input type="text" name="username" placeholder="Enter your name" required>
+            <input type="text" name="task" placeholder="Add a new task" required>
+            <button type="submit">Add Task</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Task</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td>{{ task[1] }}</td>
+                    <td class="{{ 'completed' if task[3] == 'Completed' else '' }}">{{ task[2] }}</td>
+                    <td>{{ task[3] }}</td>
+                    <td>
+                        {% if task[3] != 'Completed' %}
+                        <a href="/complete_task/{{ task[0] }}">Complete</a> |
+                        {% endif %}
+                        <a href="/delete_task/{{ task[0] }}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-        <td valign="top"><br><br><br>
-            <div align="left">
-            <table  width="60%" class="tableborder">
-            <tr><td>
-                <table  width="100%" >
-                    <tr><td >
-                        <table>
-                            <tr><td>
-                                <img src="images/userprofile.png">
-                            </td><td>Members name</td></tr>
-                        </table>
-                    </td></tr>
-                    <tr><td></td></tr>
-                </table>
-            </td></tr>
-            </table>
-            </div>
-        </td> 
-        </tr>
-    </table>
-</div>
 </body>
 </html>
